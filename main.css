@@ -1,0 +1,38 @@
+.graph
+{
+	width:520px;
+	height:220px;
+	background-color:#000;
+	margin:10px;
+	padding:10px;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+}
+
+	.bar
+	{
+		height:100%;
+		width:20%;
+		background-color:#F00;
+		float:left;
+	}
+
+	.bar + .bar
+	{
+		background-color:#0F0;
+	}
+
+	.bar + .bar + .bar
+	{
+		background-color:#00F;
+	}
+
+	.bar + .bar + .bar + .bar
+	{
+		background-color:#FF0;
+	}
+
+	.bar + .bar + .bar + .bar + .bar
+	{
+		background-color:#0FF;
+	}

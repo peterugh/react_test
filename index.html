@@ -1,0 +1,110 @@
+<html>
+	<head>
+		<title>Hello React</title>
+		<link rel="stylesheet" href="reset.css">
+		<link rel="stylesheet" href="main.css">
+		<script src="js/react.js"></script>
+		<script src="js/JSXTransformer.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.8/TweenMax.min.js"></script>
+	</head>
+	<body>
+		<div id="holder"></div>
+		<script type="text/jsx">
+			/**
+			* @jsx React.DOM
+			*/
+
+			function trace()
+			{
+				console.log("trace", graph.amounts);
+			}
+
+			function total(list)
+			{
+				var sum=0;
+				for(var i=0; i<list.length; i++)
+				{
+					if(typeof list[i]=="number")
+					{
+						sum+=list[i];
+					}
+					else if(typeof list[i]=="boolean")
+					{
+						if(list[i])
+							sum++;
+					}
+				}
+				return sum;
+			}
+
+			function relativePercentage(bottomEnd, topEnd, current)
+			{
+				 return (current-bottomEnd)/(topEnd-bottomEnd);
+			}
+			
+			var Graph=React.createClass({
+				bars:null,
+				amounts:[1,1,1,1,1],
+				barClicked:function(bar)
+				{
+					this.amounts[this.bars.indexOf(bar)]++;
+					trace();
+					var currentTotal=total(this.amounts);
+					for(var i=0, iLen=this.bars.length; i<iLen; i++)
+					{
+						TweenLite.to(this.bars[i], 0.5, {width:relativePercentage(0,currentTotal,this.amounts[i]), ease:Cubic.easeInOut});
+					}
+				},
+				render:function()
+				{
+					var instance=this;
+					this.bars=[];
+					var bars=this.amounts.map(function(width)
+					{
+						return <Bar parent={instance}/>;
+					})
+					return (
+						<ul className="graph">
+							{bars}
+						</ul>
+						);
+				}
+			});
+
+			var Bar=React.createClass({
+				width:function(num)
+				{
+					if(typeof num=="number")
+					{
+						if(num!=this._width)
+						{
+							this.getDOMNode().style.width=num*100+"%";
+							this._width=num;
+						}
+					}
+					else
+					{
+						return this._width;
+					}
+				},
+				_width:0.2,
+				componentDidMount:function()
+				{
+					this.props.parent.bars.push(this);
+				},
+				render:function()
+				{
+					return <li className="bar" onClick={this.onClick}></li>
+				},
+				onClick:function(evt)
+				{
+					this.props.parent.barClicked(this);
+				}
+			});
+
+			var graph=React.renderComponent(
+				<Graph/>, document.getElementById("holder"));
+
+		</script>
+	</body>
+</html>
