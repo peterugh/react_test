@@ -5,68 +5,64 @@
 		<link rel="stylesheet" href="main.css">
 		<script src="js/react.js"></script>
 		<script src="js/JSXTransformer.js"></script>
+		<script src="js/MyMath.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.8/TweenMax.min.js"></script>
 	</head>
 	<body>
 		<div id="holder"></div>
 		<script type="text/jsx">
-			/**
-			* @jsx React.DOM
-			*/
+			/** @jsx React.DOM */
 
-			function trace()
-			{
-				console.log("trace", graph.amounts);
-			}
-
-			function total(list)
-			{
-				var sum=0;
-				for(var i=0; i<list.length; i++)
+			var GraphRandomizer=React.createClass({
+				render:function()
 				{
-					if(typeof list[i]=="number")
-					{
-						sum+=list[i];
-					}
-					else if(typeof list[i]=="boolean")
-					{
-						if(list[i])
-							sum++;
-					}
+					return (
+						<div className="graphRandomizer">
+							<Graph ref="graph"/>
+							<button onClick={this.onClick}>click here</button>
+						</div>
+						);
+				},
+				onClick:function()
+				{
+					this.refs.graph.resetAmounts();
 				}
-				return sum;
-			}
+			});
 
-			function relativePercentage(bottomEnd, topEnd, current)
-			{
-				 return (current-bottomEnd)/(topEnd-bottomEnd);
-			}
-			
 			var Graph=React.createClass({
-				bars:null,
-				amounts:[1,1,1,1,1],
-				barClicked:function(bar)
+				resetAmounts:function()
 				{
-					this.amounts[this.bars.indexOf(bar)]++;
-					trace();
-					var currentTotal=total(this.amounts);
-					for(var i=0, iLen=this.bars.length; i<iLen; i++)
+					this.setState({amounts:[MyMath.random(1,5,true), MyMath.random(1,5,true), MyMath.random(1,5,true), MyMath.random(1,5,true), MyMath.random(1,5,true)]});
+				},
+				barClick:function(bar)
+				{
+					var clone=this.state.amounts.slice(0);
+					clone[bar]++;
+					this.setState({amounts:clone});
+				},
+				componentDidUpdate:function()
+				{
+					var currentTotal=MyMath.total(this.state.amounts);
+					for(var i=0, iLen=this.state.amounts.length; i<iLen; i++)
 					{
-						TweenLite.to(this.bars[i], 0.5, {width:relativePercentage(0,currentTotal,this.amounts[i]), ease:Cubic.easeInOut});
+						TweenLite.to(this.refs["bar"+i], 0.5, {width:MyMath.relativePercentage(0,currentTotal,this.state.amounts[i]), ease:Cubic.easeInOut});
 					}
+				},
+				getInitialState:function()
+				{
+					return {amounts:[1,1,1,1,1]};
 				},
 				render:function()
 				{
 					var instance=this;
-					this.bars=[];
-					var bars=this.amounts.map(function(width)
+					var bars=this.state.amounts.map(function(width, i)
 					{
-						return <Bar parent={instance}/>;
-					})
+						return <Bar clickCallback={this.barClick.bind(this, i)} ref={"bar"+i}/>;
+					}, this);
 					return (
-						<ul className="graph">
+						<div className="graph">
 							{bars}
-						</ul>
+						</div>
 						);
 				}
 			});
@@ -88,22 +84,18 @@
 					}
 				},
 				_width:0.2,
-				componentDidMount:function()
-				{
-					this.props.parent.bars.push(this);
-				},
 				render:function()
 				{
-					return <li className="bar" onClick={this.onClick}></li>
+					return <div className="bar" onClick={this.onClick}></div>
 				},
-				onClick:function(evt)
+				onClick:function()
 				{
-					this.props.parent.barClicked(this);
+					this.props.clickCallback();
 				}
 			});
 
-			var graph=React.renderComponent(
-				<Graph/>, document.getElementById("holder"));
+			var graphRanodmizer=React.renderComponent(
+				<GraphRandomizer/>, document.getElementById("holder"));
 
 		</script>
 	</body>

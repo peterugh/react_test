@@ -1,38 +1,57 @@
-.graph
+.graphRandomizer
 {
-	width:520px;
-	height:220px;
-	background-color:#000;
 	margin:10px;
-	padding:10px;
-	-moz-box-sizing:border-box;
-	box-sizing:border-box;
 }
 
-	.bar
+	.graphRandomizer > button
 	{
-		height:100%;
-		width:20%;
-		background-color:#F00;
-		float:left;
+		font-family:Helvetica, Arial;
+		text-transform:uppercase;
+		padding:0 7px;
+		font-size:10px;
+		height:20px;
+		line-height:20px;
+		outline:1px solid #000;
+		-moz-box-sizing:border-box;
+		box-sizing:border-box;
 	}
 
-	.bar + .bar
+	.graph
 	{
-		background-color:#0F0;
+		width:520px;
+		height:220px;
+		background-color:#000;
+		padding:10px;
+		-moz-box-sizing:border-box;
+		box-sizing:border-box;
+		margin-bottom:10px;
 	}
 
-	.bar + .bar + .bar
-	{
-		background-color:#00F;
-	}
+		.bar
+		{
+			height:100%;
+			width:20%;
+			background-color:#F00;
+			float:left;
+			cursor:pointer;
+		}
 
-	.bar + .bar + .bar + .bar
-	{
-		background-color:#FF0;
-	}
+		.bar + .bar
+		{
+			background-color:#0F0;
+		}
 
-	.bar + .bar + .bar + .bar + .bar
-	{
-		background-color:#0FF;
-	}
+		.bar + .bar + .bar
+		{
+			background-color:#00F;
+		}
+
+		.bar + .bar + .bar + .bar
+		{
+			background-color:#FF0;
+		}
+
+		.bar + .bar + .bar + .bar + .bar
+		{
+			background-color:#0FF;
+		}
