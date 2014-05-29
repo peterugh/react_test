@@ -1,0 +1,102 @@
+<html>
+	<head>
+		<title>Hello React</title>
+		<link rel="stylesheet" href="reset.css">
+		<link rel="stylesheet" href="main.css">
+		<script src="js/react.js"></script>
+		<script src="js/JSXTransformer.js"></script>
+		<script src="js/MyMath.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.8/TweenMax.min.js"></script>
+	</head>
+	<body>
+		<div id="holder"></div>
+		<script type="text/jsx">
+			/** @jsx React.DOM */
+
+			var GraphRandomizer=React.createClass({
+				render:function()
+				{
+					return (
+						<div className="graphRandomizer">
+							<Graph ref="graph"/>
+							<button onClick={this.onClick}>click here</button>
+						</div>
+						);
+				},
+				onClick:function()
+				{
+					this.refs.graph.resetAmounts();
+				}
+			});
+
+			var Graph=React.createClass({
+				resetAmounts:function()
+				{
+					this.setState({amounts:[MyMath.random(1,5,true), MyMath.random(1,5,true), MyMath.random(1,5,true), MyMath.random(1,5,true), MyMath.random(1,5,true)]});
+				},
+				barClick:function(bar)
+				{
+					var clone=this.state.amounts.slice(0);
+					clone[bar]++;
+					this.setState({amounts:clone});
+				},
+				componentDidUpdate:function()
+				{
+					var currentTotal=MyMath.total(this.state.amounts);
+					for(var i=0, iLen=this.state.amounts.length; i<iLen; i++)
+					{
+						TweenLite.to(this.refs["bar"+i], 0.5, {width:MyMath.relativePercentage(0,currentTotal,this.state.amounts[i]), ease:Cubic.easeInOut});
+					}
+				},
+				getInitialState:function()
+				{
+					return {amounts:[1,1,1,1,1]};
+				},
+				render:function()
+				{
+					var instance=this;
+					var bars=this.state.amounts.map(function(width, i)
+					{
+						return <Bar clickCallback={this.barClick.bind(this, i)} ref={"bar"+i}/>;
+					}, this);
+					return (
+						<div className="graph">
+							{bars}
+						</div>
+						);
+				}
+			});
+
+			var Bar=React.createClass({
+				width:function(num)
+				{
+					if(typeof num=="number")
+					{
+						if(num!=this._width)
+						{
+							this.getDOMNode().style.width=num*100+"%";
+							this._width=num;
+						}
+					}
+					else
+					{
+						return this._width;
+					}
+				},
+				_width:0.2,
+				render:function()
+				{
+					return <div className="bar" onClick={this.onClick}></div>
+				},
+				onClick:function()
+				{
+					this.props.clickCallback();
+				}
+			});
+
+			var graphRanodmizer=React.renderComponent(
+				<GraphRandomizer/>, document.getElementById("holder"));
+
+		</script>
+	</body>
+</html>

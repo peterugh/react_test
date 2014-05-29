@@ -12,8 +12,6 @@
 		height:20px;
 		line-height:20px;
 		outline:1px solid #000;
-		-moz-box-sizing:border-box;
-		box-sizing:border-box;
 	}
 
 	.graph
@@ -55,3 +53,115 @@
 		{
 			background-color:#0FF;
 		}
+
+.holder
+{
+	margin:10px;
+	width:600px;
+	height:400px;
+	background-color:#DDD;
+	font-family:Helvetica;
+	font-size:10px;
+	color:#000;
+}
+
+	.holder nav
+	{
+		background-color:#888;
+	}
+
+		.holder button
+		{
+			margin:5px 0 5px 5px;
+			padding:0 5px;
+			height:20px;
+			text-transform:uppercase;
+			background-color:#EEE;
+			-webkit-border-radius:3px;
+			border-radius:3px;
+		}
+
+		.holder button.selected
+		{
+			color:#FFF;
+			background-color:#000;
+		}
+
+		.holder button.selected:hover
+		{
+			background-color:#000;
+		}
+
+		.holder button:hover
+		{
+			background-color:#CCC;
+		}
+
+	.holder section
+	{
+		padding:20px 10px;
+	}
+
+		.holder section > span
+		{
+			position:relative;
+		}
+
+		.holder section > span > *
+		{
+			position:absolute;
+			left:0;
+			width:580px;
+		}
+
+		.holder section h1
+		{
+			text-transform:uppercase;
+			font-weight:bold;
+			font-size:25px;
+			margin-bottom:10px;
+		}
+
+		.holder input
+		{
+			font-family:inherit;
+			color:inherit;
+			height:20px;
+			-webkit-border-radius:3px;
+			border-radius:3px;
+			display:block;
+			margin-bottom:5px;
+			width:200px;
+			padding:0 5px;
+			position:relative;
+		}
+
+		.holder form button
+		{
+			position:relative;
+			margin-left:0;
+			-webkit-transition:color 0.2s, background-color 0.2s;
+			transition:color 0.2s, background-color 0.2s;
+		}
+
+		.holder div
+		{
+			background-color:#000;
+			height:305px;
+			overflow:hidden;
+		}
+
+			.holder figure
+			{
+				position:absolute;
+				width:100px;
+				height:100px;
+				background-color:#F0F;
+				line-height:100px;
+				text-align:center;
+				cursor:-webkit-grab !important;
+				cursor:-moz-grab !important;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+				user-select:none;
+			}
