@@ -22,21 +22,7 @@
 					[
 						{},
 						{
-							inputs:
-								[
-									{
-										placeholder:"name",
-										value:""
-									},
-									{
-										placeholder:"dick length",
-										value:""
-									},
-									{
-										placeholder:"chicks banged",
-										value:""
-									}
-								]
+							defaultValues:{}
 						},
 						{
 							position:
@@ -49,27 +35,27 @@
 				};
 
 				var Holder=React.createClass({
+					getInitialState:function()
+					{
+						return STATE;
+					},
 					render:function()
 					{
 						var buttons=[];
-						for(var i=0, iLen=STATE.pages.length; i<iLen; i++)
+						for(var i=0, iLen=this.state.pages.length; i<iLen; i++)
 						{
-							buttons.push(<button className={i==STATE.currentPage?"selected":""} onClick={this.onNavClick.bind(this, i)} ref={"nav"+i}>page {i+1}</button>)
+							buttons.push(<button className={i==this.state.currentPage?"selected":""} onClick={this._onNavClick.bind(this, i)} ref={"nav"+i}>page {i+1}</button>)
 						}
 						return (
 							<article className="holder">
 								<nav>
 									{buttons}
 								</nav>
-								<Content/>
+								<Content state={this.state.pages}/>
 							</article>
 						)
 					},
-					getInitialState:function()
-					{
-						return STATE;
-					},
-					onNavClick:function(num)
+					_onNavClick:function(num)
 					{
 						STATE.currentPage=num;
 						this.replaceState(STATE);
@@ -83,13 +69,13 @@
 						switch(STATE.currentPage)
 						{
 							case 0:
-								bottom=<Page0 key={Math.random()}/>
+								bottom=<Page0 state={this.props.state[STATE.currentPage]} key={Math.random()}/>
 								break;
 							case 1:
-								bottom=<Page1 key={Math.random()}/>
+								bottom=<Page1 state={this.props.state[STATE.currentPage]} key={Math.random()}/>
 								break;
 							case 2:
-								bottom=<Page2 key={Math.random()}/>
+								bottom=<Page2 state={this.props.state[STATE.currentPage]} key={Math.random()}/>
 								break;
 						}
 						return (
@@ -107,7 +93,7 @@
 					render:function()
 					{
 						return (
-								<p key="poop">Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy. Fuck her right in the pussy.</p>
+							<p>This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph. This is a huge paragraph.</p>
 						);
 					},
 					componentWillEnter:function(callback)
@@ -121,37 +107,25 @@
 				});
 
 				var Page1=React.createClass({
-					data:null,
+					_PLACEHOLDERS:["name", "age", "address"],
 					render:function()
 					{
-						this.data=STATE.pages[1].inputs;
+
+						var defaultValues=this.props.state.defaultValues;
 						var inputs=[];
-						for(var i=0, iLen=this.data.length; i<iLen; i++)
+						for(var i=0, iLen=this._PLACEHOLDERS.length; i<iLen; i++)
 						{
-							var item=this.data[i];
+							var placeholder=this._PLACEHOLDERS[i];
 							inputs.push(
-								<input type="text" placeholder={item.placeholder} defaultValue={item.value} onChange={this.onChange.bind(this, i)}/>
+								<input type="text" placeholder={placeholder} defaultValue={defaultValues[placeholder]} onChange={this._onChange.bind(this, placeholder)}/>
 								);
 						}
 						return (
 							<form>
 								{inputs}
-								<button type="submit" onClick={this.onClick}>submit</button>
+								<button type="submit" onClick={this._onClick}>submit</button>
 							</form>
 						);
-					},
-					onChange:function(num, evt)
-					{
-						this.data[num].value=evt.currentTarget.value;
-					},
-					onClick:function(evt)
-					{
-						evt.preventDefault();
-						for(var i=0, iLen=this.data.length; i<iLen; i++)
-						{
-							this.data[i].value="";
-						}
-						holder.replaceState(STATE);
 					},
 					componentWillEnter:function(callback)
 					{
@@ -161,6 +135,16 @@
 						{
 							timeline.insert(TweenLite.from(children[i], 0.3, {autoAlpha:0, top:-20, ease:Cubic.easeOut}), 0.1*i);
 						}
+					},
+					_onChange:function(key, evt)
+					{
+						this.props.state.defaultValues[key]=evt.currentTarget.value;
+					},
+					_onClick:function(evt)
+					{
+						evt.preventDefault();
+						this.props.state.defaultValues={};
+						holder.replaceState(STATE);
 					},
 					componentWillLeave:function(callback)
 					{
@@ -174,11 +158,9 @@
 				});
 
 				var Page2=React.createClass({
-					data:null,
-					draggable:null,
+					_draggable:null,
 					render:function()
 					{
-						this.data=STATE.pages[2].position;
 						return (
 							<div>
 								<figure>drag me</figure>
@@ -189,32 +171,29 @@
 					{
 						var area=this.getDOMNode();
 						var dragger=area.firstChild;
-						var pos="translate3d("+this.data.x+"px,"+this.data.y+"px,0px)";
-						dragger.style.webkitTransform=pos;
-						dragger.style.transform=pos;
-						this.draggable=new Draggable(dragger, {type:"x,y", edgeResistance:0.5, onDrag:this.onDrag, bounds:area, edgeResistance:1});
-					},
-					componentWillUnmount:function()
-					{
-						this.draggable.kill();
-					},
-					onDrag:function(evt)
-					{
-						this.data.x=this.draggable.x;
-						this.data.y=this.draggable.y;
+						var pos=this.props.state.position;
+						var str="translate3d("+pos.x+"px,"+pos.y+"px,0px)";
+						var style=dragger.style;
+						style.webkitTransform=str;
+						style.transform=str;
+						this._draggable=new Draggable(dragger, {type:"x,y", edgeResistance:0.5, onDrag:this._onDrag, bounds:area, edgeResistance:1});
 					},
 					componentWillEnter:function(callback)
 					{
 						TweenLite.from(this.getDOMNode(), 0.3, {width:0, onComplete:callback, ease:Cubic.easeInOut});
 					},
+					_onDrag:function(evt)
+					{
+						this.props.state.position={x:this._draggable.x, y:this._draggable.y};
+					},
 					componentWillLeave:function(callback)
 					{
+						this._draggable.kill();
 						TweenLite.to(this.getDOMNode(), 0.3, {height:0, onComplete:callback, ease:Cubic.easeInOut});
 					}
 				});
 
-				var holder=React.renderComponent(
-					<Holder/>, document.body);
+				var holder=React.renderComponent(<Holder/>, document.body);
 			})();
 		</script>
 	</body>
